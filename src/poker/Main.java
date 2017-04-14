@@ -1,8 +1,6 @@
 package poker;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Main {
@@ -49,16 +47,18 @@ public class Main {
 		System.out.println("");
 		
 		List<Card> testList = new ArrayList<>();
-		testList.add(new Card(Suit.CLUBS, 14, "Ace", "A"));
-		testList.add(new Card(Suit.CLUBS, 14, "Ace", "A"));
-		testList.add(new Card(Suit.CLUBS, 2, "Two", "2"));
-		testList.add(new Card(Suit.CLUBS, 11, "Jack", "J"));
-		testList.add(new Card(Suit.CLUBS, 11, "Jack", "J"));
+		testList.add(new Card(Suit.CLUBS, 5, "Five", "5"));
+		testList.add(new Card(Suit.DIAMONDS, 7, "Seven", "7"));
+		testList.add(new Card(Suit.CLUBS, 7, "Seven", "7"));
+		testList.add(new Card(Suit.CLUBS, 8, "Eight", "8"));
+		testList.add(new Card(Suit.DIAMONDS, 8, "Eight", "8"));
 		
 		Combination combination = new Combination();
 		combination.ifPairOrTwoPairs(testList);
-		
-		
+		combination.HighestCard(testList);
+		combination.ifSet(testList);
+		combination.ifStreet(testList);
+		combination.ifFlush(testList);
 		
 	}
 
