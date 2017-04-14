@@ -9,9 +9,7 @@ public class Combination {
 	public void ifPairOrTwoPairs(List<Card> list){
 		
 		List<Card> list1 = new LinkedList<>(list);
-//		for (Card card : list1) {
-//			System.out.println(card);
-//		}
+
 		boolean end = false;
 		boolean onePair = false;
 		boolean twoPair = false;
@@ -56,16 +54,7 @@ public class Combination {
 		if (twoPair && onePair) {
 			System.out.println("You've got two pairs");
 		}
-//		
-//		list1.remove(0);
-//		list2.remove(1);
-//		list3.remove(2);
-//		list4.remove(3);
-//		list5.remove(4);
-//		
-//		boolean pairOne = false;
-//		boolean pairTwo = false;
-//		
+		
 //		Card pairedCard = new  Card(null, 0, null, null);
 //		Card pairedCard2 = new  Card(null, 0, null, null);
 //		

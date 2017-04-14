@@ -9,8 +9,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		// System.out.println("♥♦♣♠");
-
-
 		Deck deck = new Deck();
 
 		for (Card card : deck.getDeck()) {
@@ -50,8 +48,6 @@ public class Main {
 		
 		System.out.println("");
 		
-		
-//		List<Card> testList = Arrays.asList(new Card(Suit.CLUBS, 2, "Two", "2"), new Card(Suit.CLUBS, 4, "Four", "4"), new Card(Suit.CLUBS, 2, "Two", "2"), new Card(Suit.CLUBS, 11, "Jack", "J"), new Card(Suit.CLUBS, 11, "Jack", "J"));
 		List<Card> testList = new ArrayList<>();
 		testList.add(new Card(Suit.CLUBS, 14, "Ace", "A"));
 		testList.add(new Card(Suit.CLUBS, 14, "Ace", "A"));
@@ -61,17 +57,6 @@ public class Main {
 		
 		Combination combination = new Combination();
 		combination.ifPairOrTwoPairs(testList);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		
 		
