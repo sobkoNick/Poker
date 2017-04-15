@@ -8,8 +8,6 @@ public class ClubList {
 	public List<Card> clubs = new LinkedList<Card>();
 	
 	public ClubList() {
-		// TODO Auto-generated constructor stub
-		
 		clubs.add(new Card(Suit.CLUBS, 2, "Two", "2"));
 		clubs.add(new Card(Suit.CLUBS, 3, "Three", "3"));
 		clubs.add(new Card(Suit.CLUBS, 4, "Four", "4"));
@@ -33,10 +31,5 @@ public class ClubList {
 	public String toString() {
 		return "ClubList [clubs=" + clubs + "]";
 	}
-	
-	
-	
-	
-	
 
 }

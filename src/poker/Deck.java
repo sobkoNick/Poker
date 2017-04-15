@@ -1,9 +1,7 @@
 package poker;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -46,6 +44,5 @@ public class Deck {
 		long seed = System.nanoTime();
 		Collections.shuffle(deck, new Random(seed));
 	}
-	
 
 }
