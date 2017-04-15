@@ -5,7 +5,45 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Combination {
+	
+	public void ifCare(List<Card> list) { // set return type to boolean
+		Collections.sort(list, new SortByValue());
+		Card cardOne = list.get(0);
+		int careCounter = 0;
+		
+		if (list.get(0).getValue() == list.get(1).getValue()) {
+			for (Card card : list) {
+				if (cardOne.getValue() == card.getValue()) {
+					careCounter++;
+				}
+			}
+			
+		} else {
+			careCounter = 0;
+			cardOne = list.get(1);
+			for (Card card : list) {
+				if (cardOne.getValue() == card.getValue()) {
+					careCounter++;
+				}
+			}
+		}
+		
+		if (careCounter == 4) {
+			System.out.println("You have got care of " + cardOne);
+		}
+	}
 
+	public void ifFullHouse(List<Card> list) {
+		Collections.sort(list, new SortByValue());
+		if ((list.get(0).getValue() == list.get(1).getValue()) && 
+				(list.get(2).getValue() == list.get(3).getValue()) && (list.get(3).getValue() == list.get(4).getValue())) {
+			System.out.println("You have got full house of 3 " + list.get(4) + " and 2 " + list.get(0));
+		} else if((list.get(0).getValue() == list.get(1).getValue() && 
+				(list.get(1).getValue() == list.get(2).getValue()) && (list.get(3).getValue() == list.get(4).getValue()) )) {
+			System.out.println("You have got full house of 3 " + list.get(0) + " and 2 " + list.get(4));
+		}
+	}
+	
 	public void ifFlush(List<Card> list) {
 		int ifFlushCounter = 0;
 		Card card = list.get(0);
@@ -38,8 +76,9 @@ public class Combination {
 	public void ifSet(List<Card> list) {
 		Collections.sort(list, new SortByValue());
 		for (int i = 0; i < 3; i++) {
-			if ((list.get(i).equals(list.get(i+1))) && (list.get(i+1).equals(list.get(i+2)))) {
+			if ((list.get(i).getValue() == (list.get(i+1).getValue())) && (list.get(i+1).getValue() == (list.get(i+2).getValue()))) {
 				System.out.println("you have got set of " + list.get(i));
+				break;
 			}
 		}
 	}

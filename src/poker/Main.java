@@ -47,11 +47,18 @@ public class Main {
 		System.out.println("");
 		
 		List<Card> testList = new ArrayList<>();
-		testList.add(new Card(Suit.CLUBS, 5, "Five", "5"));
-		testList.add(new Card(Suit.DIAMONDS, 7, "Seven", "7"));
-		testList.add(new Card(Suit.CLUBS, 7, "Seven", "7"));
+		testList.add(new Card(Suit.DIAMONDS, 14, "Ace", "A"));
 		testList.add(new Card(Suit.CLUBS, 8, "Eight", "8"));
-		testList.add(new Card(Suit.DIAMONDS, 8, "Eight", "8"));
+		testList.add(new Card(Suit.CLUBS, 14, "Ace", "A"));
+		testList.add(new Card(Suit.CLUBS, 14, "Ace", "A"));
+		testList.add(new Card(Suit.CLUBS, 14, "Ace", "A"));
+		
+		testList.clear();
+		testList.add(deck.getDeck().get(0));
+		testList.add(deck.getDeck().get(1));
+		testList.add(deck.getDeck().get(2));
+		testList.add(deck.getDeck().get(3));
+		testList.add(deck.getDeck().get(4));
 		
 		Combination combination = new Combination();
 		combination.ifPairOrTwoPairs(testList);
@@ -59,7 +66,8 @@ public class Main {
 		combination.ifSet(testList);
 		combination.ifStreet(testList);
 		combination.ifFlush(testList);
-		
+		combination.ifFullHouse(testList);
+		combination.ifCare(testList);
 	}
 
 }
