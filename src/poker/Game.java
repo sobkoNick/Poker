@@ -6,68 +6,50 @@ import java.util.List;
 import java.util.Random;
 
 public class Game {
+	private AIPlayer aiPlayer = new AIPlayer();
 	public static Deck deck = new Deck();
 	public static List<Card> playingDeck = deck.getDeck();
+	
+	double playerCardsPower = 0;
+	double aiCardsPower = 0;
+	
+	List<Card> playerCards = new ArrayList<Card>();
+	List<Card> aiCards = new ArrayList<Card>();
+	List<Card> cardsTochange = new ArrayList<>();
+
+	int playerStack = 0;
+	int aiStack = 0;
+	int pot = 0;
+	int bigB = 0;
+	int smallB = 0;
+	int gameCounter = 0;
+	int playerDesicion = 0;
+	int cardIndexToChange = 0;
+	int playerBet = 0;
+	int aiBet = 0;
+
+	boolean aiChecks = false;
+	boolean playerChecks = false;
+	boolean playerIsDealer = false;
+	boolean dealerDefined = false;
+	boolean gameIsOn = true;
+	
 	public void gamePlay() {
-		
-		List<Card> testList = new ArrayList<>();
-		
-		testList.add(new Card(Suit.DIAMONDS, 4, "Four", "4"));
-		testList.add(new Card(Suit.CLUBS, 4, "Four", "4"));
-		testList.add(new Card(Suit.DIAMONDS, 4, "Four", "4"));
-		testList.add(new Card(Suit.SPADES, 14, "Ace", "A"));
-		testList.add(new Card(Suit.DIAMONDS, 14, "Ace", "A"));
-		long seed = System.nanoTime();
-		Collections.shuffle(playingDeck, new Random(seed));
-		
-		AIPlayer aiPlayer = new AIPlayer();
-		
-		aiPlayer.aiChangeCards(testList);
-		
-		for (Card card : testList) {
-			System.out.print(card);
-		}
-		
-		
-		
-		List<Card> playerCards = new ArrayList<Card>();
-		List<Card> aiCards = new ArrayList<Card>();
-		List<Card> cardsTochange = new ArrayList<>();
-
-		int playerStack = 0;
-		int aiStack = 0;
-		int pot = 0;
-		int bigB = 0;
-		int smallB = 0;
-		int gameCounter = 0;
-		int playerDesicion = 0;
-		int cardIndexToChange = 0;
-		int playerBet = 0;
-		int aibet = 0;
-
-		boolean aiChecks = false;
-		boolean playerChecks = false;
-		boolean playerIsDealer = false;
-		boolean dealerDefined = false;
-		boolean gameIsOn = true;
 
 		System.out.println("Input your starting stack. default should be like 1000");
+		
 		playerStack = Main.scanner.nextInt();
 		aiStack = playerStack;
 
 		bigB = playerStack / 25;
 		smallB = playerStack / 50;
-
+		
+		long seed = System.nanoTime();
 		
 
 		System.out.println("Game starts now! Lets shuffle up and deal!");
 
 		System.out.println("Now we define who is dealer by bigger card");
-
-		// System.out.println("Player card is ");
-		// ShowCard.showOneCard(playingDeck.get(0));
-		// System.out.println("AI card is ");
-		// ShowCard.showOneCard(playingDeck.get(1));
 
 		while (!dealerDefined) {
 			seed = System.nanoTime();
@@ -86,11 +68,6 @@ public class Game {
 				dealerDefined = true;
 			}
 		}
-
-		// for (Card card : playingDeck) {
-		// System.out.print(card);
-		// }
-		// System.out.println();
 
 		while (gameIsOn) {
 
@@ -149,7 +126,9 @@ public class Game {
 				case 1: // player calls from SB
 				{
 					playerStack -= smallB;
-
+					pot += smallB;
+					
+					aiPlayer.aiChangeCards(aiCards);
 					// ai changes cards
 
 					System.out.println("How many cards do you want to change (0-5)");
@@ -216,10 +195,6 @@ public class Game {
 
 						break;
 					case 5:
-						// for (int i = 0; i < 5; i++) {
-						// cardsTochange.add(playerCards.get(i));
-						// }
-						// playerCards.removeAll(cardsTochange);
 						playerCards.clear();
 						for (int i = 0; i < 5; i++) {
 							playerCards.add(playingDeck.get(i));
@@ -240,25 +215,14 @@ public class Game {
 					// ShowCard.showFiveCards(playerCards);
 					DefineCombination.defineCombanation(playerCards, true);
 					ShowCard.showFiveCards(playerCards);
-
+					
+					aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, 0, bigB); // ai first to act
+//					for (Card card : aiCards) {
+//						System.out.print(card);
+//					}
 					// ai makes a move
 
-					System.out.println("Your move: 1 check " + " chips; 2 - raise; 9 - fold");
-					int playerMove = Main.scanner.nextInt();
-
-					switch (playerMove) {
-					case 1:
-						// show dowm
-						break;
-					case 2:
-						// ai to fold or call
-						break;
-					case 9:
-						// start new game
-						break;
-					default:
-						break;
-					}
+					playerMove();
 
 				}
 					break;
@@ -269,10 +233,6 @@ public class Game {
 					playerBet = Main.scanner.nextInt();
 					
 					// ai makes a decision
-					
-					
-					
-					
 					
 					
 				}
@@ -328,5 +288,75 @@ public class Game {
 
 		}
 
+	}
+	
+	public boolean bettingRaund(){ // regulates betting till the end
+		
+	}
+	
+	public int playerMove() {
+		if (aiBet == 0) {
+			System.out.println("Your move: 1 check " + " chips; 2 - raise; 9 - fold");
+			int playerMoveInt = Main.scanner.nextInt();
+			switch (playerMoveInt) {
+			case 1:
+				defineWinner();
+				// show dowm
+				break;
+			case 2:
+				System.out.println("What is your raise?");
+				playerBet = Main.scanner.nextInt();
+				aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
+				// ai to fold or call
+				break;
+			case 9:
+				System.out.println("Player folds");
+				aiStack +=pot;
+				pot = 0;
+				// start new game
+				break;
+			default:
+				break;
+			}
+		} else if(aiBet > 0) {
+			
+		}
+	}
+	
+	public void defineWinner(){
+		int winner = showDown(playerCards, aiCards);
+		
+		if (winner == 1) {
+			playerStack += pot;
+			pot = 0;
+		} else if (winner == 2) {
+			aiStack += pot;
+			pot = 0;
+		} else if(winner ==0) {
+			playerStack += (pot / 2);
+			aiStack += (pot / 2);
+			pot = 0;
+		}
+	}
+
+	public int showDown(List<Card> playerCards, List<Card> aiCards) {	// returns who is a winner
+		System.out.println("Your cards");
+		playerCardsPower = DefineCombination.defineCombanation(playerCards, true);
+		ShowCard.showFiveCards(playerCards);
+		
+		System.out.println("AI cards");
+		aiCardsPower = DefineCombination.defineCombanation(aiCards, true);
+		ShowCard.showFiveCards(aiCards);
+		
+		if (playerCardsPower > aiCardsPower) {
+			System.out.println("Player wins");
+			return 1;
+		} else if (playerCardsPower < aiCardsPower) {
+			System.out.println("AI wins");
+			return 2;
+		} else {
+			System.out.println("Split pot");
+			return 0;
+		}
 	}
 }

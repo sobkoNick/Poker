@@ -142,7 +142,6 @@ public class Main {
 //		System.out.println("ifCare " + combination.ifCare(testList));
 //		System.out.println("ifStreetFlush " + combination.ifStreetFlush(testList));
 //		System.out.println("ifFlushRoyal " + combination.ifFlushRoyal(testList));
-
 	}
 
 }
