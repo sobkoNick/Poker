@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Combination {
 	
-	public boolean ifFlushRoyal(List<Card> list) {
+	public boolean ifFlushRoyal(List<Card> list, boolean showResult) {
 		Card card = list.get(0);
 		boolean sameSuit = true;
 		for (Card cardFromList : list) {
@@ -27,14 +27,16 @@ public class Combination {
 					return false;
 				}
 			}
-			System.out.println("You have got Royal Flush from " + list.get(0) + " to " + list.get(4));
+			if (showResult) {
+				System.out.println("You have got Royal Flush from " + list.get(0) + " to " + list.get(4));
+			}
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public boolean ifStreetFlush(List<Card> list) {
+	public boolean ifStreetFlush(List<Card> list, boolean showResult) {
 
 		Card card = list.get(0);
 		boolean sameSuit = true;
@@ -59,14 +61,16 @@ public class Combination {
 		}
 
 		if (cardValueCounter == list.get(list.size() - 1).getValue()) {
-			System.out.println("You have got street flush from " + list.get(0) + " to " + list.get(4));
+			if (showResult) {
+				System.out.println("You have got street flush from " + list.get(0) + " to " + list.get(4));
+			}
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public boolean ifCare(List<Card> list) { // set return type to boolean
+	public boolean ifCare(List<Card> list, boolean showResult) { // set return type to boolean
 		Collections.sort(list, new SortByValue());
 		Card cardOne = list.get(0);
 		int careCounter = 0;
@@ -78,7 +82,9 @@ public class Combination {
 				}
 			}
 			if (careCounter == 4) {
-				System.out.println("You have got care of " + list.get(1) + list.get(2) + list.get(3) + list.get(0));
+				if (showResult) {
+					System.out.println("You have got care of " + list.get(1) + list.get(2) + list.get(3) + list.get(0));
+				}
 				return true;
 			}
 
@@ -91,7 +97,9 @@ public class Combination {
 				}
 			}
 			if (careCounter == 4) {
-				System.out.println("You have got care of " + list.get(1) + list.get(2) + list.get(3) + list.get(4));
+				if (showResult) {
+					System.out.println("You have got care of " + list.get(1) + list.get(2) + list.get(3) + list.get(4));
+				}
 				return true;
 			}
 		}
@@ -105,25 +113,30 @@ public class Combination {
 		// }
 	}
 
-	public boolean ifFullHouse(List<Card> list) {
+	public boolean ifFullHouse(List<Card> list, boolean showResult) {
 		Collections.sort(list, new SortByValue());
 		if ((list.get(0).getValue() == list.get(1).getValue()) && (list.get(2).getValue() == list.get(3).getValue())
 				&& (list.get(3).getValue() == list.get(4).getValue())) {
-			System.out.println("You have got full house of 3 " + list.get(4) + list.get(3) + list.get(2) + " and 2 "
-					+ list.get(0) + list.get(1));
+			
+			if (showResult) {
+				System.out.println("You have got full house of 3 " + list.get(4) + list.get(3) + list.get(2) + " and 2 "
+						+ list.get(0) + list.get(1));
+			}
 			return true;
 		} else if ((list.get(0).getValue() == list.get(1).getValue()
 				&& (list.get(1).getValue() == list.get(2).getValue())
 				&& (list.get(3).getValue() == list.get(4).getValue()))) {
-			System.out.println("You have got full house of 3 " + list.get(0) + list.get(1) + list.get(2) + " and 2 "
-					+ list.get(4) + list.get(3));
+			if (showResult) {
+				System.out.println("You have got full house of 3 " + list.get(0) + list.get(1) + list.get(2) + " and 2 "
+						+ list.get(4) + list.get(3));
+			}
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public boolean ifFlush(List<Card> list) {
+	public boolean ifFlush(List<Card> list, boolean showResult) {
 		int ifFlushCounter = 0;
 		Card card = list.get(0);
 		for (Card cardFromList : list) {
@@ -134,14 +147,16 @@ public class Combination {
 			}
 		}
 		if (ifFlushCounter == 5) {
-			System.out.println("You have got flush up to " + list.get(list.size() - 1));
+			if (showResult) {
+				System.out.println("You have got flush up to " + list.get(list.size() - 1));	
+			}
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public boolean ifStreet(List<Card> list) {
+	public boolean ifStreet(List<Card> list, boolean showResult) {
 		Collections.sort(list, new SortByValue());
 		int ifStreetCounter = 0;
 		int cardValue = list.get(0).getValue();
@@ -154,7 +169,9 @@ public class Combination {
 			}
 		}
 		if (ifStreetCounter == 4) {
-			System.out.println("You have got street from " + list.get(0) + " to " + list.get(list.size() - 1));
+			if (showResult) {
+				System.out.println("You have got street from " + list.get(0) + " to " + list.get(list.size() - 1));
+			}
 			return true;
 		} else {
 			return false;
@@ -162,19 +179,22 @@ public class Combination {
 
 	}
 
-	public boolean ifSet(List<Card> list) {
+	public boolean ifSet(List<Card> list, boolean showResult) {
 		Collections.sort(list, new SortByValue());
 		for (int i = 0; i < 3; i++) {
 			if ((list.get(i).getValue() == (list.get(i + 1).getValue()))
 					&& (list.get(i + 1).getValue() == (list.get(i + 2).getValue()))) {
-				System.out.println("you have got set of " + list.get(i));
+				
+				if (showResult) {
+					System.out.println("you have got set of " + list.get(i));
+				}
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean ifPairOrTwoPairs(List<Card> list) {
+	public boolean ifPairOrTwoPairs(List<Card> list, boolean showResult) {
 
 		List<Card> list1 = new LinkedList<>(list);
 
@@ -185,7 +205,9 @@ public class Combination {
 			for (int j = 0; j < list.size(); j++) {
 				if (i != j) {
 					if (list.get(i).getValue() == list.get(j).getValue()) {
-						System.out.println("One pair " + list.get(i) + "" + list.get(j));
+						if (showResult) {
+							System.out.println("One pair " + list.get(i) + "" + list.get(j));
+						}
 						list1.remove(i);
 						list1.remove(j - 1);
 						onePair = true;
@@ -207,7 +229,9 @@ public class Combination {
 			for (int j = 0; j < list1.size(); j++) {
 				if (i != j) {
 					if (list1.get(i).getValue() == list1.get(j).getValue()) {
-						System.out.println("One pair " + list1.get(i) + "" + list1.get(j));
+						if (showResult) {
+							System.out.println("One pair " + list1.get(i) + "" + list1.get(j));
+						}
 						end = true;
 						twoPair = true;
 						break;
@@ -220,7 +244,9 @@ public class Combination {
 		}
 
 		if (twoPair && onePair) {
-			System.out.println("You've got two pairs");
+			if (showResult) {
+				System.out.println("You've got two pairs");	
+			}
 			return true;
 		} else if (onePair || twoPair) {
 			return true;
@@ -314,12 +340,11 @@ public class Combination {
 		// }
 	}
 
-	public boolean HighestCard(List<Card> list) {
+	public boolean HighestCard(List<Card> list, boolean showResult) {
 		Collections.sort(list, new SortByValue());
-//		for (Card card : list) {
-//			System.out.println(card);
-//		}
-		System.out.println("Highest card is " + list.get(list.size() - 1));
+		if (showResult) {
+			System.out.println("Highest card is " + list.get(list.size() - 1));
+		}
 		return true;
 	}
 
