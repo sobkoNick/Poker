@@ -91,22 +91,25 @@ public class Game {
 			
 			
 //			playingDeck.clear();
+			
 			playingDeck.removeAll(playingDeck);
 			Deck deck2 = new Deck();
 			
-			for (Card card : deck2.getDeck()) {
-				System.out.print(card);
-			}
-			System.out.println("-------------");
+//			for (Card card : deck2.getDeck()) {
+//				System.out.print(card);
+//			}
+//			System.out.println("-------------");
 			
 //			playingDeck.addAll(deck2.getDeck());
+			
 			playingDeck = deck2.getDeck();
 			seed = System.nanoTime();
 			Collections.shuffle(playingDeck, new Random(seed));
-			System.out.println("Playing deck: ");
-			for (Card card : playingDeck) {
-				System.out.print(card);
-			}
+			
+//			System.out.println("Playing deck: ");
+//			for (Card card : playingDeck) {
+//				System.out.print(card);
+//			}
 			
 			/*
 			 * 	aiCards = new ArrayList<Card>();
@@ -180,16 +183,7 @@ public class Game {
 					ShowCard.showFiveCards(playerCards);
 
 					bettingRaund(false);
-
-					// aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, 0,
-					// bigB); // ai
-					// // first
-					// // to
-					// // act
-					//
-					// // ai makes a move
-					//
-					// playerMoveAfterAI();
+					
 
 				}
 					break;
@@ -197,7 +191,11 @@ public class Game {
 				case 2: // player raises
 				{
 					aiBet = 0;
-					bettingRaundBeforeChange(true);
+					
+					
+					if (bettingRaundBeforeChange(true) == false) {
+						break;
+					}
 
 					aiPlayer.aiChangeCards(aiCards);
 					// ai changes cards
@@ -212,14 +210,6 @@ public class Game {
 
 					bettingRaund(false);
 
-					// System.out.println("How much is your raise?");
-					// playerBet = Main.scanner.nextInt();
-					//
-					// // ai makes a decision
-					//
-					// aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet,
-					// bigB);
-
 				}
 					break;
 				case 9:
@@ -230,10 +220,7 @@ public class Game {
 					break;
 				}
 				
-			} else {
-//				playingDeck.addAll(deck.getDeck());
-////				playingDeck = deck.getDeck();
-//				Collections.shuffle(playingDeck, new Random(seed));
+			} else { // ai is dealer
 				
 				playerStack -= bigB;
 				aiStack -= smallB;
@@ -266,16 +253,44 @@ public class Game {
 				playingDeck.remove(1);
 				playingDeck.remove(0);
 
-				// ShowCard.showFiveCards(aiCards);
-				//
-				// System.out.println("--------------");
 				System.out.println("Your cards:");
-				// ShowCard.showFiveCards(playerCards);
 				DefineCombination.defineCombanation(playerCards, true);
 				ShowCard.showFiveCards(playerCards);
+				
+				// ai think if to call
+				playerBet = smallB;
+				
+				if (bettingRaundBeforeChange(true) == false) {
+					break;
+				}
+				
+				System.out.println("How many cards do you want to change (0-5)");
+				int numberOfCardsToChangeByPlayer = Main.scanner.nextInt();
+				playerChangeCards(numberOfCardsToChangeByPlayer);
+				
+				aiChangeCards(aiCards);
 
+				System.out.println("Your cards after exchange:");
+				DefineCombination.defineCombanation(playerCards, true);
+				ShowCard.showFiveCards(playerCards);
+				
+				bettingRaund(true);
+				
 			}
+			
+			System.out.println("------STACKS------");
+			System.out.println("Your stack = " + playerStack);
+			System.out.println("AI stack = " + aiStack);
+			System.out.println("------------");
+			
 
+			if (playerStack <= 0) {
+				System.out.println("!!!----AI wins this game----!!!!");
+				gameIsOn = false;
+			} else if (aiStack <= 0) {
+				System.out.println("!!!----Player wins this game----!!!!");
+				gameIsOn = false;
+			}
 			
 			if (playerIsDealer) {
 				playerIsDealer = false;
@@ -283,12 +298,35 @@ public class Game {
 				playerIsDealer = true;
 			}
 //			gameIsOn = false;
+			
+
+			
+			
+			/*
+			 * TASK:
+			 * 1. розібратися з роботою методів бетів.
+			 * 2. зробити так щоб після завершення бетів відбувався метод шоудану, а не в одному з бет методів !!!
+			 * 3. робота зі стеком все ще працює не добре
+			 * 
+			 * 
+			 */
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
 		}
 
 	}
-	
-	
 
 	public void playerChangeCards(int changePlayerCards) {
 		switch (changePlayerCards) {
@@ -479,37 +517,56 @@ public class Game {
 		}
 	
 	}
-	public void bettingRaundBeforeChange(boolean playerStarts) {
+	public boolean bettingRaundBeforeChange(boolean playerStarts) {
 		// regulates betting till the end
 		boolean gameIsOn = true;
-		// int playerBetting = 0;
-		// int aiBetting = 0;
-		playerBet = 0;
+//		playerBet = 0;
 		while (gameIsOn) {
 			if (playerStarts) {
 				playerBet = playerMoveAfterAI();
 				if (playerBet > 0) {
 					aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
 					if (aiBet == playerBet) {
-						// defineWinner();
+						aiStack -= aiBet;
+						pot += aiBet;
 						gameIsOn = false;
+						return false;
 					} else if (aiBet < 0) {
 						playerStack += pot;
 						pot = 0;
 						gameIsOn = false;
+						return false;
+					}
+				} else if (playerBet == 0) {
+					aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
+					if (aiBet == playerBet) {
+						aiStack -= aiBet;
+						pot += aiBet;
+						gameIsOn = false;
+						return false;
+					} else if (aiBet < 0) {
+						playerStack += pot;
+						pot = 0;
+						gameIsOn = false;
+						return false;
 					}
 				}
-				// } else if (playerBet == 0 && aiBet == 0) {
-				//
-				// }
+//				else if (playerBet < 0) {
+//					return false;
+//				}
 
 			} else {
 				aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
 				if (aiBet == playerBet) {
+					aiStack -= aiBet;
+					pot += aiBet;
 					// defineWinner();
 					gameIsOn = false;
 				} else if (aiBet > playerBet) {
-					playerBet = playerMoveAfterAI();
+					aiStack -= aiBet;
+					pot += aiBet;
+					playerStarts = true; // if ai bets next move has player
+//					playerBet = playerMoveAfterAI();
 					if (playerBet == 0) {
 						gameIsOn = false;
 					}
@@ -517,11 +574,12 @@ public class Game {
 					playerStack += pot;
 					pot = 0;
 					gameIsOn = false;
+					return false;
 				}
 			}
 		}
 
-		// return true;
+		 return true;
 
 	}
 
@@ -537,6 +595,8 @@ public class Game {
 				if (playerBet > 0) {
 					aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
 					if (aiBet == playerBet) {
+						pot += aiBet;
+						aiStack -= aiBet;
 						defineWinner();
 						gameIsOn = false;
 					} else if (aiBet < 0) {
@@ -545,16 +605,17 @@ public class Game {
 						gameIsOn = false;
 					}
 				}
-				// } else if (playerBet == 0 && aiBet == 0) {
-				//
-				// }
 
 			} else {
 				aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
 				if (aiBet == playerBet) {
+					pot += aiBet;
+					aiStack -= aiBet;
 					defineWinner();
 					gameIsOn = false;
 				} else if (aiBet > playerBet) {
+					pot += aiBet;
+					aiStack -= aiBet;
 					playerBet = playerMoveAfterAI();
 					if (playerBet == 0) {
 						gameIsOn = false;
@@ -576,14 +637,17 @@ public class Game {
 			int playerMoveInt = Main.scanner.nextInt();
 			switch (playerMoveInt) {
 			case 1:
-				defineWinner(); // show dowm
+				
+//				defineWinner(); // show dowm
+				
+				// тут не має бути дефайн вінера
 				return 0;
-
 			// break;
 			case 2:
 				System.out.println("What is your raise?");
 				playerBet = Main.scanner.nextInt();
-				// aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
+				playerStack -= playerBet;
+				pot +=playerBet;
 				return playerBet;
 			// ai to fold or call
 
@@ -592,7 +656,7 @@ public class Game {
 				System.out.println("Player folds");
 				aiStack += pot; // start new game
 				pot = 0;
-				return 0;
+				return -1;
 			// break;
 			default:
 				break;
@@ -610,7 +674,8 @@ public class Game {
 			case 2:
 				System.out.println("What is your raise?");
 				playerBet = Main.scanner.nextInt();
-				// aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
+				playerStack -= playerBet;
+				pot += playerBet;
 				return playerBet;
 			// ai to fold or call
 
@@ -619,7 +684,7 @@ public class Game {
 				System.out.println("Player folds");
 				aiStack += pot;
 				pot = 0;
-				return 0;
+				return -1;
 			// start new game
 			// break;
 			}
