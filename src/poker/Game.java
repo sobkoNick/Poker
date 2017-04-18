@@ -89,27 +89,13 @@ public class Game {
 				roundCounter = 0;
 			}
 			
-			
-//			playingDeck.clear();
-			
 			playingDeck.removeAll(playingDeck);
 			Deck deck2 = new Deck();
-			
-//			for (Card card : deck2.getDeck()) {
-//				System.out.print(card);
-//			}
-//			System.out.println("-------------");
-			
-//			playingDeck.addAll(deck2.getDeck());
 			
 			playingDeck = deck2.getDeck();
 			seed = System.nanoTime();
 			Collections.shuffle(playingDeck, new Random(seed));
 			
-//			System.out.println("Playing deck: ");
-//			for (Card card : playingDeck) {
-//				System.out.print(card);
-//			}
 			
 			/*
 			 * 	aiCards = new ArrayList<Card>();
@@ -156,24 +142,13 @@ public class Game {
 				playingDeck.remove(1);
 				playingDeck.remove(0);
 
-				// ShowCard.showFiveCards(aiCards);
-				// System.out.println("--------------");
 				System.out.println("Your cards:");
-				// ShowCard.showFiveCards(playerCards);
 				DefineCombination.defineCombanation(playerCards, true);
 				ShowCard.showFiveCards(playerCards);
-
-				System.out.println("Your move: 1 - to call " + smallB + " chips; 2 - raise; 9 - fold");
-				playerDesicion = Main.scanner.nextInt();
-				switch (playerDesicion) {
-				case 1: // player calls from SB
-				{
-					playerStack -= smallB;
-					pot += smallB;
-
+				boolean game = bettingRaund(true, 0, smallB);
+				if (game) {
 					aiPlayer.aiChangeCards(aiCards);
-					// ai changes cards
-
+					
 					System.out.println("How many cards do you want to change (0-5)");
 					int numberOfCardsToChangeByPlayer = Main.scanner.nextInt();
 					playerChangeCards(numberOfCardsToChangeByPlayer);
@@ -181,43 +156,13 @@ public class Game {
 					System.out.println("Your cards after exchange:");
 					DefineCombination.defineCombanation(playerCards, true);
 					ShowCard.showFiveCards(playerCards);
-
-					bettingRaund(false);
-					
-
-				}
-					break;
-
-				case 2: // player raises
-				{
-					aiBet = 0;
 					
 					
-					if (bettingRaundBeforeChange(true) == false) {
-						break;
+					game = bettingRaund(false, 0, 0);
+					if (game) {
+						defineWinner();
 					}
-
-					aiPlayer.aiChangeCards(aiCards);
-					// ai changes cards
-
-					System.out.println("How many cards do you want to change (0-5)");
-					int numberOfCardsToChangeByPlayer = Main.scanner.nextInt();
-					playerChangeCards(numberOfCardsToChangeByPlayer);
-
-					System.out.println("Your cards after exchange:");
-					DefineCombination.defineCombanation(playerCards, true);
-					ShowCard.showFiveCards(playerCards);
-
-					bettingRaund(false);
-
-				}
-					break;
-				case 9:
-					aiStack += pot;
-					pot = 0;
-					break;
-				default:
-					break;
+					
 				}
 				
 			} else { // ai is dealer
@@ -257,25 +202,23 @@ public class Game {
 				DefineCombination.defineCombanation(playerCards, true);
 				ShowCard.showFiveCards(playerCards);
 				
-				// ai think if to call
-				playerBet = smallB;
-				
-				if (bettingRaundBeforeChange(true) == false) {
-					break;
-				}
-				
-				System.out.println("How many cards do you want to change (0-5)");
-				int numberOfCardsToChangeByPlayer = Main.scanner.nextInt();
-				playerChangeCards(numberOfCardsToChangeByPlayer);
-				
-				aiChangeCards(aiCards);
+				boolean game = bettingRaund(false, smallB, 0);
+				if (game) {
+					
+					System.out.println("How many cards do you want to change (0-5)");
+					int numberOfCardsToChangeByPlayer = Main.scanner.nextInt();
+					playerChangeCards(numberOfCardsToChangeByPlayer);
 
-				System.out.println("Your cards after exchange:");
-				DefineCombination.defineCombanation(playerCards, true);
-				ShowCard.showFiveCards(playerCards);
-				
-				bettingRaund(true);
-				
+					System.out.println("Your cards after exchange:");
+					DefineCombination.defineCombanation(playerCards, true);
+					ShowCard.showFiveCards(playerCards);
+					
+					aiPlayer.aiChangeCards(aiCards);
+					game = bettingRaund(true, 0, 0);
+					if (game) {
+						defineWinner();
+					}
+				}		
 			}
 			
 			System.out.println("------STACKS------");
@@ -294,12 +237,11 @@ public class Game {
 			
 			if (playerIsDealer) {
 				playerIsDealer = false;
+				System.out.println("---------Dealer is AI----------");
 			} else {
 				playerIsDealer = true;
+				System.out.println("---------Dealer is player----------");
 			}
-//			gameIsOn = false;
-			
-
 			
 			
 			/*
@@ -311,22 +253,63 @@ public class Game {
 			 * 
 			 */
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-
 		}
 
 	}
+	
+	public boolean bettingRaund(boolean playerMoveNow, int playerBetValue, int aiBetValue){ 
+		// if returns true - bettting is over and doing next step (changing or showdown) 
+		// if returns false - someone folded
+		
+		boolean bettingIsGoing = true;
+		
+		if (playerMoveNow) {
+			
+			playerBet = playerMoveAfterAI(aiBetValue);
+			if (playerBet == 0) { // player checks
+				if (aiBet == 0) {
+					return true;
+				} else {
+					bettingRaund(false, 0, 0);
+				}
+			} 
+			else if (playerBet > 0) { // player bets
+				pot += playerBet;
+				playerStack -= playerBet;
+				bettingRaund(false, playerBet, 0);
+			} 
+			else if (playerBet < 0) { // player folds
+				aiStack += pot;
+				pot = 0;
+				return false;
+			}
+			
+		} else { // ai move
+			aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
+			if (aiBet == 0) { // ai checks
+				
+				if (playerBet == 0) {
+					return true;
+				} else {
+					bettingRaund(true, 0, 0);
+				}
+			} 
+			else if (aiBet > 0) { // ai bets
+				pot += aiBet;
+				aiStack -= aiBet;
+				bettingRaund(true, 0, aiBet);
+			} 
+			else if (aiBet < 0) { // ai folds
+				playerStack += pot;
+				pot = 0;
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	
 
 	public void playerChangeCards(int changePlayerCards) {
 		switch (changePlayerCards) {
@@ -517,122 +500,122 @@ public class Game {
 		}
 	
 	}
-	public boolean bettingRaundBeforeChange(boolean playerStarts) {
-		// regulates betting till the end
-		boolean gameIsOn = true;
-//		playerBet = 0;
-		while (gameIsOn) {
-			if (playerStarts) {
-				playerBet = playerMoveAfterAI();
-				if (playerBet > 0) {
-					aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
-					if (aiBet == playerBet) {
-						aiStack -= aiBet;
-						pot += aiBet;
-						gameIsOn = false;
-						return false;
-					} else if (aiBet < 0) {
-						playerStack += pot;
-						pot = 0;
-						gameIsOn = false;
-						return false;
-					}
-				} else if (playerBet == 0) {
-					aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
-					if (aiBet == playerBet) {
-						aiStack -= aiBet;
-						pot += aiBet;
-						gameIsOn = false;
-						return false;
-					} else if (aiBet < 0) {
-						playerStack += pot;
-						pot = 0;
-						gameIsOn = false;
-						return false;
-					}
-				}
-//				else if (playerBet < 0) {
+//	public boolean bettingRaundBeforeChange(boolean playerStarts) {
+//		// regulates betting till the end
+//		boolean gameIsOn = true;
+////		playerBet = 0;
+//		while (gameIsOn) {
+//			if (playerStarts) {
+//				playerBet = playerMoveAfterAI();
+//				if (playerBet > 0) {
+//					aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
+//					if (aiBet == playerBet) {
+//						aiStack -= aiBet;
+//						pot += aiBet;
+//						gameIsOn = false;
+//						return false;
+//					} else if (aiBet < 0) {
+//						playerStack += pot;
+//						pot = 0;
+//						gameIsOn = false;
+//						return false;
+//					}
+//				} else if (playerBet == 0) {
+//					aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
+//					if (aiBet == playerBet) {
+//						aiStack -= aiBet;
+//						pot += aiBet;
+//						gameIsOn = false;
+//						return false;
+//					} else if (aiBet < 0) {
+//						playerStack += pot;
+//						pot = 0;
+//						gameIsOn = false;
+//						return false;
+//					}
+//				}
+////				else if (playerBet < 0) {
+////					return false;
+////				}
+//
+//			} else {
+//				aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
+//				if (aiBet == playerBet) {
+//					aiStack -= aiBet;
+//					pot += aiBet;
+//					// defineWinner();
+//					gameIsOn = false;
+//				} else if (aiBet > playerBet) {
+//					aiStack -= aiBet;
+//					pot += aiBet;
+//					playerStarts = true; // if ai bets next move has player
+////					playerBet = playerMoveAfterAI();
+//					if (playerBet == 0) {
+//						gameIsOn = false;
+//					}
+//				} else if (aiBet < 0) {
+//					playerStack += pot;
+//					pot = 0;
+//					gameIsOn = false;
 //					return false;
 //				}
+//			}
+//		}
+//
+//		 return true;
+//
+//	}
 
-			} else {
-				aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
-				if (aiBet == playerBet) {
-					aiStack -= aiBet;
-					pot += aiBet;
-					// defineWinner();
-					gameIsOn = false;
-				} else if (aiBet > playerBet) {
-					aiStack -= aiBet;
-					pot += aiBet;
-					playerStarts = true; // if ai bets next move has player
+//	public boolean bettingRaund(boolean playerStarts) {// regulates betting till
+//														// the end
+//		boolean gameIsOn = true;
+//		// int playerBetting = 0;
+//		// int aiBetting = 0;
+//		playerBet = 0;
+//		while (gameIsOn) {
+//			if (playerStarts) {
+//				playerBet = playerMoveAfterAI();
+//				if (playerBet > 0) {
+//					aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
+//					if (aiBet == playerBet) {
+//						pot += aiBet;
+//						aiStack -= aiBet;
+//						defineWinner();
+//						gameIsOn = false;
+//					} else if (aiBet < 0) {
+//						playerStack += pot;
+//						pot = 0;
+//						gameIsOn = false;
+//					}
+//				}
+//
+//			} else {
+//				aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
+//				if (aiBet == playerBet) {
+//					pot += aiBet;
+//					aiStack -= aiBet;
+//					defineWinner();
+//					gameIsOn = false;
+//				} else if (aiBet > playerBet) {
+//					pot += aiBet;
+//					aiStack -= aiBet;
 //					playerBet = playerMoveAfterAI();
-					if (playerBet == 0) {
-						gameIsOn = false;
-					}
-				} else if (aiBet < 0) {
-					playerStack += pot;
-					pot = 0;
-					gameIsOn = false;
-					return false;
-				}
-			}
-		}
+//					if (playerBet == 0) {
+//						gameIsOn = false;
+//					}
+//				} else if (aiBet < 0) {
+//					playerStack += pot;
+//					pot = 0;
+//					gameIsOn = false;
+//				}
+//			}
+//		}
+//
+//		return true;
+//	}
 
-		 return true;
-
-	}
-
-	public boolean bettingRaund(boolean playerStarts) {// regulates betting till
-														// the end
-		boolean gameIsOn = true;
-		// int playerBetting = 0;
-		// int aiBetting = 0;
-		playerBet = 0;
-		while (gameIsOn) {
-			if (playerStarts) {
-				playerBet = playerMoveAfterAI();
-				if (playerBet > 0) {
-					aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
-					if (aiBet == playerBet) {
-						pot += aiBet;
-						aiStack -= aiBet;
-						defineWinner();
-						gameIsOn = false;
-					} else if (aiBet < 0) {
-						playerStack += pot;
-						pot = 0;
-						gameIsOn = false;
-					}
-				}
-
-			} else {
-				aiBet = aiPlayer.aiDesicionCheckBetFold(aiCards, playerBet, bigB);
-				if (aiBet == playerBet) {
-					pot += aiBet;
-					aiStack -= aiBet;
-					defineWinner();
-					gameIsOn = false;
-				} else if (aiBet > playerBet) {
-					pot += aiBet;
-					aiStack -= aiBet;
-					playerBet = playerMoveAfterAI();
-					if (playerBet == 0) {
-						gameIsOn = false;
-					}
-				} else if (aiBet < 0) {
-					playerStack += pot;
-					pot = 0;
-					gameIsOn = false;
-				}
-			}
-		}
-
-		return true;
-	}
-
-	public int playerMoveAfterAI() {
-		if (aiBet == 0) {
+	public int playerMoveAfterAI(int aiBetValue) {
+		if (aiBetValue == 0) {
 			System.out.println("Your move: 1 check " + "; 2 - raise; 9 - fold");
 			int playerMoveInt = Main.scanner.nextInt();
 			switch (playerMoveInt) {
@@ -661,7 +644,7 @@ public class Game {
 			default:
 				break;
 			}
-		} else if (aiBet > 0) {
+		} else if (aiBetValue > 0) {
 			System.out.println("Your move: 1 call " + "; 2 - raise; 9 - fold");
 			int playerMoveInt = Main.scanner.nextInt();
 			switch (playerMoveInt) {
