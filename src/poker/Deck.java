@@ -44,5 +44,4 @@ public class Deck {
 		long seed = System.nanoTime();
 		Collections.shuffle(deck, new Random(seed));
 	}
-
 }

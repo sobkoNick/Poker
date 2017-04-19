@@ -7,7 +7,6 @@ public class SpadesList {
 	public List<Card> spades = new LinkedList<Card>();
 
 	public SpadesList() {
-		// TODO Auto-generated constructor stub
 		spades.add(new Card(Suit.SPADES, 2, "Two", "2"));
 		spades.add(new Card(Suit.SPADES, 3, "Three", "3"));
 		spades.add(new Card(Suit.SPADES, 4, "Four", "4"));

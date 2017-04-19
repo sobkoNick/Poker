@@ -11,7 +11,6 @@ public class ShowCard {
 		System.out.println("│\t│");
 		System.out.println("│\t│");
 		System.out.println("└───────┘");
-//		System.out.println();
 	}
 
 	public static void showFiveCards(List<Card> deck) {

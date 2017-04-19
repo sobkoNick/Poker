@@ -7,7 +7,6 @@ public class HartsList {
 	public List<Card> harts = new LinkedList<Card>();
 
 	public HartsList() {
-		// TODO Auto-generated constructor stub
 		harts.add(new Card(Suit.HARTS, 2, "Two", "2"));
 		harts.add(new Card(Suit.HARTS, 3, "Three", "3"));
 		harts.add(new Card(Suit.HARTS, 4, "Four", "4"));

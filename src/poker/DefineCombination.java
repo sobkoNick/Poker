@@ -4,29 +4,32 @@ import java.util.List;
 
 public class DefineCombination {
 	
-	public static int defineCombanation(List<Card> passedList, boolean showResult) { // defines your combiantion
+	public static double defineCombanation(List<Card> passedList, boolean showResult) {
+		
 		Combination combination = new Combination();
 		List<Card> list = passedList;
+		
+		double combiPower = 0;
 		if (combination.ifFlushRoyal(list, showResult)) {
-			return 10;
-		} else if (combination.ifStreetFlush(list, showResult)) {
-			return 9;
-		} else if (combination.ifStreetFlush(list, showResult)) {
-			return 8;
-		} else if (combination.ifCare(list, showResult)) {
-			return 7;
-		} else if (combination.ifFullHouse(list, showResult)) {
-			return 6;
-		} else if (combination.ifFlush(list, showResult)) {
-			return 5;
-		} else if (combination.ifStreet(list, showResult)) {
-			return 4;
-		} else if (combination.ifSet(list, showResult)) {
-			return 3;
-		} else if (combination.ifPairOrTwoPairs(list, showResult)) {
-			return 2;
-		} else if (combination.HighestCard(list, showResult)) {
-			return 1;
+			return 10.0;
+		} else if ((combiPower = combination.ifStreetFlush(list, showResult)) > 0) {
+			return combiPower;
+		} else if ((combiPower = combination.ifStreetFlush(list, showResult)) > 0) {
+			return combiPower;
+		} else if ((combiPower = combination.ifCare(list, showResult)) > 0) {
+			return combiPower;
+		} else if ((combiPower = combination.ifFullHouse(list, showResult)) > 0) {
+			return combiPower;
+		} else if ((combiPower = combination.ifFlush(list, showResult)) > 0) {
+			return combiPower;
+		} else if ((combiPower = combination.ifStreet(list, showResult)) > 0) {
+			return combiPower;
+		} else if ((combiPower = combination.ifSet(list, showResult)) > 0) {
+			return combiPower;
+		} else if (( combiPower = combination.ifPairOrTwoPairs(list, showResult)) > 0) {
+			return combiPower;
+		} else if ((combiPower = combination.HighestCard(list, showResult)) > 0) {
+			return combiPower;
 		} else {
 			return 0;
 		}
