@@ -175,7 +175,7 @@ public class Combination {
 				if (showResult) {
 					System.out.println("you have got set of " + list.get(i));
 				}
-				return 3.0 + (list.get(i).getValue() / 100);
+				return (3.0 + (list.get(i).getValue() / 100));
 			}
 		}
 		return 0.0;
