@@ -23,7 +23,7 @@ public class CombinationTest {
 		assertEquals(8.0, result, 0.01);
 	}
 	
-	@Test
+	@Test(timeout = 10)
 	public void testSet() {
 		cards.add(new Card(Suit.SPADES, 2, "Two", "2"));
 		cards.add(new Card(Suit.HARTS, 2, "Two", "2"));
